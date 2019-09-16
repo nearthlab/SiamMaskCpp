@@ -3,6 +3,11 @@
 * Efficient network output post-processing using [OpenCV's GPU matrix operations](https://docs.opencv.org/2.4/modules/gpu/doc/per_element_operations.html) instead of numpy
 * Faster than original implementation (speed increased from 22fps to 40fps when tested with a single NVIDIA GeForce GTX 1070)
 
+# Requirements
+* OpenCV >= 3.4.0
+* pytorch >= 1.3.0
+* dlib >= 19.13
+
 # Convert a SiamMask model to Torch scripts
 You can use the models (with the refine module) trained with the original repository [foolwood/SiamMask](https://github.com/foolwood/SiamMask) for inference in C++. Just Follow the instruction in [jiwoong-choi/SiamMask](https://github.com/jiwoong-choi/SiamMask#converting-siammask-model-with-the-refine-module-to-torch-scripts) to convert your own models to Torch script files.
 
