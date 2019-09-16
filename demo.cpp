@@ -1,6 +1,6 @@
 #include <argparse/argparse.hpp>
 #include <dlib/dir_nav.h>
-#include "siammask.h"
+#include <SiamMask/siammask.h>
 
 void overlayMask(const Mat& src, const Mat& mask, Mat& dst) {
     vector<Mat> chans;
