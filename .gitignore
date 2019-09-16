@@ -1,1 +1,5 @@
-./build/*
+/build/*
+/models/*
+CMakeLists.txt.user
+
+
