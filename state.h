@@ -35,6 +35,7 @@ struct State {
     float score = 0.f;
     GpuMat window;
     Mat mask;
+    RotatedRect rotated_rect;
 
     void load_config(const string& config_path) {
         dlib::config_reader cr(config_path);

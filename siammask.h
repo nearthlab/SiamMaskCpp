@@ -399,6 +399,7 @@ inline void siameseTrack(
         const auto& max_area = areas[max_idx];
         if(max_area > 100) {
             next_target = cv::boundingRect(contours[max_idx]);
+            state.rotated_rect = cv::minAreaRect(contours[max_idx]);
         }
     }
 

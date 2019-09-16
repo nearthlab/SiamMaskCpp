@@ -15,6 +15,7 @@ using GpuMat = cv::cuda::GpuMat;
 using Mat = cv::Mat;
 using Point = cv::Point;
 using Rect = cv::Rect;
+using RotatedRect = cv::RotatedRect;
 using Scalar = cv::Scalar;
 
 template<typename T, typename U>
