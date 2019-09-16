@@ -7,12 +7,21 @@
 You can use the models (with the refine module) trained with the original repository [foolwood/SiamMask](https://github.com/foolwood/SiamMask) for inference in C++. Just Follow the instruction in [jiwoong-choi/SiamMask](https://github.com/jiwoong-choi/SiamMask#converting-siammask-model-with-the-refine-module-to-torch-scripts) to convert your own models to Torch script files.
 
 # Download pretrained Torch scripts
-Or you can download pretrained Torch scripts from the [release page](https://github.com/nearthlab/SiamMaskCpp/releases). 
-These are converted from the pretrained models ([SiamMask_DAVIS.pth](http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth) and [SiamMask_VOT.pth](http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth)) in the original repository.
+Or you can download pretrained Torch scripts. These files are converted from the pretrained models ([SiamMask_DAVIS.pth](http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth) and [SiamMask_VOT.pth](http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth)) in the original repository.
+
+```bash
+git clone --recurse-submodules https://github.com/nearthlab/SiamMaskCpp
+cd SiamMaskCpp
+mkdir models
+cd models
+wget https://github.com/nearthlab/SiamMaskCpp/releases/download/v1.0/SiamMask_DAVIS.tar.gz
+wget https://github.com/nearthlab/SiamMaskCpp/releases/download/v1.0/SiamMask_VOT.tar.gz
+tar -xvzf SiamMask_DAVIS.tar.gz
+tar -xvzf SiamMask_VOT.tar.gz
+```
 
 # How to build demo
 ```bash
-git clone --recurse-submodules https://github.com/nearthlab/SiamMaskCpp
 cd SiamMaskCpp
 mkdir build
 cd build
@@ -23,5 +32,6 @@ make
 # How to run demo
 ```bash
 cd SiamMaskCpp/build
-./demo -c ../config_davis.cfg -m ../SiamMask_DAVIS ../tennis
+./demo -c ../config_davis.cfg -m ../models/SiamMask_DAVIS ../tennis
+./demo -c ../config_vot.cfg -m ../models/SiamMask_VOT ../tennis
 ```
