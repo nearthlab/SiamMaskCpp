@@ -1,7 +1,7 @@
 #ifndef SIAMMASK_STATE_Hh
 #define SIAMMASK_STATE_Hh
 
-#include "common.h"
+#include <opencv2/core.hpp>
 #include "config_reader.h"
 
 struct State {
@@ -11,7 +11,7 @@ struct State {
     float window_influence = 0.39;
     float lr = 0.38;
     float seg_thr = 0.3; // for mask
-    string windowing = "cosine"; // to penalize large displacements [cosine/uniform]
+    std::string windowing = "cosine"; // to penalize large displacements [cosine/uniform]
 
     // Params from the network architecture, have to be consistent with the training
     long exemplar_size = 127; // input z size
@@ -23,23 +23,23 @@ struct State {
 
     // Params for anchor generation
     uint64_t stride = 8;
-    vector<float> ratios = { 0.33, 0.5, 1, 2, 3 };
-    vector<float> scales = { 8 };
+    std::vector<float> ratios = { 0.33, 0.5, 1, 2, 3 };
+    std::vector<float> scales = { 8 };
     uint64_t image_center = 0;
     uint64_t anchor_density = 1;
-    GpuMat anchors;
+    cv::cuda::GpuMat anchors;
 
     // Tracking params
     cv::Scalar avg_chans = cv::Scalar(0, 0, 0);
-    Rect target;
+    cv::Rect target;
     float score = 0.f;
-    GpuMat window;
-    Mat mask;
-    RotatedRect rotated_rect;
+    cv::cuda::GpuMat window;
+    cv::Mat mask;
+    cv::RotatedRect rotated_rect;
 
-    void load_config(const string& config_path) {
+    void load_config(const std::string& config_path) {
         dlib::config_reader cr(config_path);
-        cout << "Loading SiamMask config: " << config_path << " ..." << endl;
+        std::cout << "Loading SiamMask config: " << config_path << " ..." << std::endl;
         penalty_k = dlib::get_option(cr, "hp.penalty_k", penalty_k);
         window_influence = dlib::get_option(cr, "hp.window_influence", window_influence);
         lr = dlib::get_option(cr, "hp.lr", lr);
@@ -65,7 +65,12 @@ struct State {
     }
 };
 
+#ifndef shapeof
+#define shapeof(m) std::vector<int>({m.rows, m.cols, m.channels()})
+#endif // shapeof
+
 std::ostream& operator << (std::ostream& out, const State& state) {
+    using std::endl;
     out << "window_influence: " << state.window_influence << endl
         << "seg_thr: " << state.seg_thr << endl
         << "windowing: " << state.windowing << endl
@@ -80,10 +85,10 @@ std::ostream& operator << (std::ostream& out, const State& state) {
         << "scales: " << state.scales << endl
         << "image_center: " << state.image_center << endl
         << "anchor_density: " << state.anchor_density << endl
-        << "anchors(shape): " << shapeof(state.anchors) << endl
+        << "anchors(rows cols channels): " << shapeof(state.anchors) << endl
         << "avg_chans: " << state.avg_chans << endl
         << "target: " << state.target << endl
-        << "window(shape): " << shapeof(state.window);
+        << "window(rows cols channels): " << shapeof(state.window);
     return out;
 }
 
