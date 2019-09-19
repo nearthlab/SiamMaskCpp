@@ -1,6 +1,7 @@
 #ifndef SIAMMASK_NUMPY_Hh
 #define SIAMMASK_NUMPY_Hh
 
+#include <dlib/numeric_constants.h>
 #include "geometry.h"
 
 namespace numpy {

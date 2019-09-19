@@ -173,7 +173,7 @@ inline torch::Tensor getSubwindowTensor(
     cv::Rect context = centeredRect(center(target), original_sz, original_sz);
 
     cv::Rect img_rect = getRect(img);
-    cv::Rect padded_rect = uniteRects(img_rect, context);
+    cv::Rect padded_rect = img_rect | context;
     cv::Point dp = -padded_rect.tl();
 
     context = translateRect(context, dp);
@@ -231,6 +231,10 @@ inline void siameseTrack(
     const cv::cuda::GpuMat& img,
     const torch::Device& device
 ) {
+    // Prevent segmentation fault from degenerate box
+    if(state.target.width == 0) { state.target.width = 1; }
+    if(state.target.height == 0) { state.target.height = 1; }
+
     const unsigned long wc_x = state.target.width + state.context_amount * (state.target.width + state.target.height);
     const unsigned long hc_x = state.target.height + state.context_amount * (state.target.width + state.target.height);
     float s_x = round(sqrt(wc_x * hc_x));
@@ -378,7 +382,7 @@ inline void siameseTrack(
 
     cv::cuda::GpuMat mask_in_img;
     mask_in_img.upload(cv::Mat::zeros(imgrect.size(), mask_chip.type()));
-    cv::Rect mask_subpos = intersectRects(mask_pos, imgrect);
+    cv::Rect mask_subpos = mask_pos & imgrect;
     cv::Rect mask_roi = translateRect(mask_subpos, -mask_pos.tl());
     mask_chip(mask_roi).copyTo(mask_in_img(mask_subpos));
 
