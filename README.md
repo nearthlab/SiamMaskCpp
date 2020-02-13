@@ -5,8 +5,7 @@
 
 # Requirements
 * OpenCV >= 3.4.0
-* pytorch >= 1.3.0
-* dlib >= 19.13
+* PyTorch >= 1.3.0
 
 # Convert a SiamMask model to Torch scripts
 You can use the models (with the refine module) trained with the original repository [foolwood/SiamMask](https://github.com/foolwood/SiamMask) for inference in C++. Just Follow the instruction in [jiwoong-choi/SiamMask](https://github.com/jiwoong-choi/SiamMask#converting-siammask-model-with-the-refine-module-to-torch-scripts) to convert your own models to Torch script files.
@@ -25,18 +24,25 @@ tar -xvzf SiamMask_DAVIS.tar.gz
 tar -xvzf SiamMask_VOT.tar.gz
 ```
 
+Before building demo, make sure the following command prints out the correct path to torch install directory.
+```bash
+python3 -c "import torch; print(torch.__path__[0])"
+# /path/to/lib/python3.x/site-packages/torch
+```
+
 # How to build demo
 ```bash
 cd SiamMaskCpp
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=/path/to/python3.x/site-packages/torch ..
+# specify -DTORCH_PATH=/path/to/lib/python3.x/site-packages/torch if cmake fails to detect PyTorch automatically
+cmake ..
 make
 ```
 
 # How to run demo
 ```bash
 cd SiamMaskCpp/build
-./demo -c ../config_davis.cfg -m ../models/SiamMask_DAVIS ../tennis
-./demo -c ../config_vot.cfg -m ../models/SiamMask_VOT ../tennis
+./demo -c ../config_davis.json -m ../models/SiamMask_DAVIS ../tennis
+./demo -c ../config_vot.json -m ../models/SiamMask_VOT ../tennis
 ```

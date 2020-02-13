@@ -1,10 +1,11 @@
 #ifndef SIAMMASK_NUMPY_Hh
 #define SIAMMASK_NUMPY_Hh
 
-#include <dlib/numeric_constants.h>
 #include "geometry.h"
 
 namespace numpy {
+    const double pi = 3.1415926535897932385;
+
     inline cv::Mat tile(const cv::Mat& x, uint64_t reps, bool along_row = true) {
         cv::Mat concat;
         if(along_row)
@@ -73,7 +74,7 @@ namespace numpy {
     inline cv::Mat hanning(uint64_t M) {
         cv::Mat w(1, M, CV_32FC1);
         for(uint64_t n = 0; n < M; ++n)
-            w.at<float>(0, n) = 0.5 - 0.5*cos(2*dlib::pi*n / (M - 1));
+            w.at<float>(0, n) = 0.5 - 0.5*cos(2*pi*n / (M - 1));
         return w;
     }
 

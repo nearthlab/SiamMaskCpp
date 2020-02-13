@@ -2,7 +2,7 @@
 #define SIAMMASK_STATE_Hh
 
 #include <opencv2/core.hpp>
-#include "config_reader.h"
+#include <nlohmann/json.hpp>
 
 struct State {
 
@@ -38,22 +38,33 @@ struct State {
     cv::RotatedRect rotated_rect;
 
     void load_config(const std::string& config_path) {
-        dlib::config_reader cr(config_path);
-        std::cout << "Loading SiamMask config: " << config_path << " ..." << std::endl;
-        penalty_k = dlib::get_option(cr, "hp.penalty_k", penalty_k);
-        window_influence = dlib::get_option(cr, "hp.window_influence", window_influence);
-        lr = dlib::get_option(cr, "hp.lr", lr);
-        seg_thr = dlib::get_option(cr, "hp.seg_thr", seg_thr);
-        windowing = dlib::get_option(cr, "hp.windowing", windowing);
-        base_size = dlib::get_option(cr, "hp.base_size", base_size);
-        instance_size = dlib::get_option(cr, "hp.instance_size", instance_size);
-        out_size = dlib::get_option(cr, "hp.out_size", out_size);
+        std::ifstream fin(config_path);
+        if (fin.is_open()) {
+            nlohmann::json json;
+            fin >> json;
+            const auto& hp = json.at("hp");
 
-        ratios = dlib::get_option(cr, "anchors.ratios", ratios);
-        scales = dlib::get_option(cr, "anchors.scales", scales);
-        stride = dlib::get_option(cr, "anchors.stride", stride);
-        image_center = dlib::get_option(cr, "anchors.image_center", image_center);
-        anchor_density = dlib::get_option(cr, "anchors.anchor_density", anchor_density);
+            penalty_k = hp.value("penalty_k", penalty_k);
+            window_influence = hp.value("window_influence", window_influence);
+            lr = hp.value("lr", lr);
+            seg_thr = hp.value("seg_thr", seg_thr);
+            windowing = hp.value("windowing", windowing);
+            base_size = hp.value("base_size", base_size);
+            instance_size = hp.value("instance_size", instance_size);
+            out_size = hp.value("out_size", out_size);
+
+            const auto& anchors = json.at("anchors");
+
+            ratios = anchors.value("ratios", ratios);
+            scales = anchors.value("scales", scales);
+            stride = anchors.value("stride", stride);
+            image_center = anchors.value("image_center", image_center);
+            anchor_density = anchors.value("anchor_density", anchor_density);
+        } else {
+            std::ostringstream sout;
+            sout << "Failed to open config file " << config_path;
+            throw std::runtime_error(sout.str());
+        }
     }
 
     uint64_t anchor_num() const {

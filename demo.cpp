@@ -1,8 +1,51 @@
+#include <dirent.h>
+#include <sys/stat.h>
+
 #include <opencv2/opencv.hpp>
 
-#include <argparse/argparse.hpp>
-#include <dlib/dir_nav.h>
+#include <argparse.hpp>
 #include <SiamMask/siammask.h>
+
+bool dirExists(const std::string& path)
+{
+    struct stat info{};
+    if (stat(path.c_str(), &info) != 0)
+        return false;
+    return info.st_mode & S_IFDIR;
+}
+
+std::vector<std::string> listDir(const std::string& path, const std::vector<std::string>& match_ending)
+{
+    static const auto ends_with = [](std::string const & value, std::string const & ending) -> bool
+    {
+        if (ending.size() > value.size()) return false;
+        return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+    };
+
+    if(!dirExists(path)) {
+        throw std::runtime_error(std::string("Directory not found: ") + path);
+    }
+
+    std::vector<std::string> files;
+    DIR *dir = opendir(path.c_str());
+
+    if(dir == nullptr)
+        return files;
+
+    struct dirent *pdirent;
+    while ((pdirent = readdir(dir)) != nullptr) {
+        std::string name(pdirent->d_name);
+        for(const auto& ending : match_ending){
+            if(ends_with(name, ending)) {
+                files.push_back(path + "/" + name);
+                break;
+            }
+        }
+    }
+    closedir(dir);
+
+    return files;
+}
 
 void overlayMask(const cv::Mat& src, const cv::Mat& mask, cv::Mat& dst) {
     std::vector<cv::Mat> chans;
@@ -36,17 +79,15 @@ int main(int argc, const char* argv[]) try {
     State state;
     state.load_config(parser.retrieve<std::string>("config"));
 
-    dlib::directory target_dir(parser.retrieve<std::string>("target"));
-    std::vector<dlib::file> image_files = dlib::get_files_in_directory_tree(
-        target_dir, dlib::match_endings("jpg png bmp"), 0
-    );
+    const std::string target_dir = parser.retrieve<std::string>("target");
+    std::vector<std::string> image_files = listDir(target_dir, {"jpg", "png", "bmp"});
     std::sort(image_files.begin(), image_files.end());
 
     std::cout << image_files.size() << " images found in " << target_dir << std::endl;
 
     std::vector<cv::Mat> images;
     for(const auto& image_file : image_files) {
-        images.push_back(cv::imread(image_file.full_name()));
+        images.push_back(cv::imread(image_file));
     }
 
     cv::namedWindow("SiamMask");
