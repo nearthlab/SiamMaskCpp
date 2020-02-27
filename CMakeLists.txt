@@ -10,14 +10,19 @@ if (NOT DEFINED TORCH_PATH)
   endif()
 endif()
 
-find_package(Torch REQUIRED PATHS ${TORCH_PATH})
-find_package(OpenCV REQUIRED)
+find_package(Torch 1.3 REQUIRED PATHS ${TORCH_PATH})
+find_package(OpenCV 3 REQUIRED
+  COMPONENTS
+  opencv_core
+  opencv_imgproc
+  opencv_highgui
+)
 
 include_directories(
     "."
     "./third_party/argparse"
     "./third_party/json/include"
-    "${TORCH_PATH}/include"
+    "${TORCH_INCLUDE_DIRS}"
 )
 
 add_executable(demo demo.cpp)

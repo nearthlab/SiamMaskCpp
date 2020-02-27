@@ -2,6 +2,7 @@
 #define SIAMMASK_STATE_Hh
 
 #include <opencv2/core.hpp>
+#include <torch/types.h>
 #include <nlohmann/json.hpp>
 
 struct State {
@@ -22,18 +23,18 @@ struct State {
     float context_amount = 0.5; // context amount for the exemplar
 
     // Params for anchor generation
-    uint64_t stride = 8;
+    int64_t stride = 8;
     std::vector<float> ratios = { 0.33, 0.5, 1, 2, 3 };
     std::vector<float> scales = { 8 };
-    uint64_t image_center = 0;
-    uint64_t anchor_density = 1;
-    cv::cuda::GpuMat anchors;
+    int64_t image_center = 0;
+    int64_t anchor_density = 1;
+    torch::Tensor anchors;
 
     // Tracking params
     cv::Scalar avg_chans = cv::Scalar(0, 0, 0);
     cv::Rect target;
     float score = 0.f;
-    cv::cuda::GpuMat window;
+    torch::Tensor window;
     cv::Mat mask;
     cv::RotatedRect rotated_rect;
 
@@ -67,18 +68,14 @@ struct State {
         }
     }
 
-    uint64_t anchor_num() const {
+    int64_t num_anchors() const {
         return scales.size() * ratios.size() * anchor_density * anchor_density;
     }
 
-    uint64_t score_size() const {
-        return uint64_t((instance_size - exemplar_size) / total_stride) + 1 + base_size;
+    int64_t score_size() const {
+        return int64_t((instance_size - exemplar_size) / total_stride) + 1 + base_size;
     }
 };
-
-#ifndef shapeof
-#define shapeof(m) std::vector<int>({m.rows, m.cols, m.channels()})
-#endif // shapeof
 
 std::ostream& operator << (std::ostream& out, const State& state) {
     using std::endl;
@@ -96,10 +93,10 @@ std::ostream& operator << (std::ostream& out, const State& state) {
         << "scales: " << state.scales << endl
         << "image_center: " << state.image_center << endl
         << "anchor_density: " << state.anchor_density << endl
-        << "anchors(rows cols channels): " << shapeof(state.anchors) << endl
+        << "anchors(rows cols channels): " << state.anchors.sizes() << endl
         << "avg_chans: " << state.avg_chans << endl
         << "target: " << state.target << endl
-        << "window(rows cols channels): " << shapeof(state.window);
+        << "window(rows cols channels): " << state.window.sizes();
     return out;
 }
 

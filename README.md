@@ -1,11 +1,14 @@
 # SiamMaskCpp
 * C++ Implementation of [SiamMask](https://github.com/foolwood/SiamMask)
-* Efficient network output post-processing using [OpenCV's GPU matrix operations](https://docs.opencv.org/2.4/modules/gpu/doc/per_element_operations.html) instead of numpy
-* Faster than original implementation (speed increased from 22fps to 40fps when tested with a single NVIDIA GeForce GTX 1070)
+* Porting slogan:
+    * numpy operations &rarr; cv::Mat operations
+    * CNNs &rarr; torch::jit::script::Module
+    * Other tensor operations &rarr; torch::Tensor operations
+* Faster than the original implementation (speed increased from 22fps to 40fps when tested with a single NVIDIA GeForce GTX 1070)
 
 # Requirements
-* OpenCV >= 3.4.0
-* PyTorch >= 1.3.0
+* OpenCV >= 3 (tested with 3.4.0)
+* PyTorch >= 1 (tested with 1.3.0)
 
 # Convert a SiamMask model to Torch scripts
 You can use the models (with the refine module) trained with the original repository [foolwood/SiamMask](https://github.com/foolwood/SiamMask) for inference in C++. Just Follow the instruction in [jiwoong-choi/SiamMask](https://github.com/jiwoong-choi/SiamMask#converting-siammask-model-with-the-refine-module-to-torch-scripts) to convert your own models to Torch script files.
@@ -38,11 +41,14 @@ cd build
 # specify -DTORCH_PATH=/path/to/lib/python3.x/site-packages/torch if cmake fails to detect PyTorch automatically
 cmake ..
 make
+
+# Move the executable file to the repository directory
+mv demo ..
 ```
 
 # How to run demo
 ```bash
-cd SiamMaskCpp/build
-./demo -c ../config_davis.json -m ../models/SiamMask_DAVIS ../tennis
-./demo -c ../config_vot.json -m ../models/SiamMask_VOT ../tennis
+cd SiamMaskCpp
+./demo -c config_davis.json -m models/SiamMask_DAVIS tennis
+./demo -c config_vot.json -m models/SiamMask_VOT tennis
 ```

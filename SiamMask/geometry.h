@@ -11,8 +11,7 @@ inline cv::Rect centeredRect(const cv::Point& center, int width, int height) {
     return cv::Rect(center.x - width / 2, center.y - height / 2, width, height);
 }
 
-template<typename MatType>
-cv::Rect getRect(const MatType& img) {
+cv::Rect getRect(const cv::Mat& img) {
     return cv::Rect(0, 0, img.cols, img.rows);
 }
 

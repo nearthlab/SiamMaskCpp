@@ -101,15 +101,13 @@ int main(int argc, const char* argv[]) try {
         int64 tic = cv::getTickCount();
 
         cv::Mat& src = images[i];
-        cv::cuda::GpuMat gsrc;
-        gsrc.upload(src);
 
         if (i == 0) {
             std::cout << "Initializing..." << std::endl;
-            siameseInit(state, siammask, gsrc, roi, device);
+            siameseInit(state, siammask, src, roi, device);
             cv::rectangle(src, roi, cv::Scalar(0, 255, 0));
         } else {
-            siameseTrack(state, siammask, gsrc, device);
+            siameseTrack(state, siammask, src, device);
             overlayMask(src, state.mask, src);
             drawBox(src, state.rotated_rect, cv::Scalar(0, 255, 0));
         }
