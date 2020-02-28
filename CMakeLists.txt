@@ -22,9 +22,10 @@ include_directories(
     "."
     "./third_party/argparse"
     "./third_party/json/include"
-    "${TORCH_INCLUDE_DIRS}"
+    ${OpenCV_INCLUDE_DIRS}
+    ${TORCH_INCLUDE_DIRS}
 )
 
 add_executable(demo demo.cpp)
-target_link_libraries(demo "${TORCH_LIBRARIES}" "${OpenCV_LIBS}")
+target_link_libraries(demo ${OpenCV_LIBRARIES} ${TORCH_LIBRARIES})
 set_property(TARGET demo PROPERTY CXX_STANDARD 11)
