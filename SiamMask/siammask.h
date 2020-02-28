@@ -340,7 +340,7 @@ inline void siameseTrack(
     cv::Rect mask_roi = translateRect(mask_subpos, -mask_pos.tl());
     mask_chip(mask_roi).copyTo(mask_in_img(mask_subpos));
 
-    cv::threshold(mask_in_img, state.mask, state.seg_thr, 255, CV_THRESH_BINARY);
+    cv::threshold(mask_in_img, state.mask, state.seg_thr, 255, cv::THRESH_BINARY);
     state.mask.convertTo(state.mask, CV_8UC1);
 
     std::vector<std::vector<cv::Point> > contours;

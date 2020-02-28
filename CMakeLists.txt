@@ -11,7 +11,7 @@ if (NOT DEFINED TORCH_PATH)
 endif()
 
 find_package(Torch 1.3 REQUIRED PATHS ${TORCH_PATH})
-find_package(OpenCV 3 REQUIRED
+find_package(OpenCV REQUIRED
   COMPONENTS
   opencv_core
   opencv_imgproc
